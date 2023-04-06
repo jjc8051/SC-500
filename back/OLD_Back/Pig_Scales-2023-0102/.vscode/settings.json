@@ -1,0 +1,7 @@
+{
+	"files.associations": {
+		"compiler.h": "c",
+		"clock_config.h": "c",
+		"Main.C": "cpp"
+	}
+}
