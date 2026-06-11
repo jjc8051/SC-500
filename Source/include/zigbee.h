@@ -1,6 +1,6 @@
 //=================================================================================================
 //		File  Name	:	zigbee.h
-//		File  ³»¿ë	:	zigbee Æß¿ş¾î Çì´õ
+//		File  ë‚´ìš©	:	zigbee íŒì›¨ì–´ í—¤ë”
 //=================================================================================================
 #ifndef __ZigBee_H__
 #define __ZigBee_H__
@@ -9,21 +9,21 @@
 #include <main.h>
 
 //=================================================================================================
-uint16_t Pan_id_1000;							// ZigBee Pan_id 1000ÀÇ ÀÚ¸®
-uint16_t Pan_id_100;							// ZigBee Pan_id  100ÀÇ ÀÚ¸®
-uint16_t Pan_id_10;							// ZigBee Pan_id   10ÀÇ ÀÚ¸®
-uint16_t Pan_id_1;							// ZigBee Pan_id    1ÀÇ ÀÚ¸®
+uint16_t Pan_id_1000;							// ZigBee Pan_id 1000ì˜ ìë¦¬
+uint16_t Pan_id_100;							// ZigBee Pan_id  100ì˜ ìë¦¬
+uint16_t Pan_id_10;							// ZigBee Pan_id   10ì˜ ìë¦¬
+uint16_t Pan_id_1;							// ZigBee Pan_id    1ì˜ ìë¦¬
 uint16_t ZB_id;								// ZigBee Pan_id
 
 uint8_t ZB_ch;								// ZigBee channel
 
 //=================================================================================================
-void ZigBee_Write_id(void);						// ZigBee PanID ÀúÀå
-void ZigBee_PanID_Write(void);						// ZigBee PanID ¼³Á¤
-void ZigBee_Write_ch(void);						// ZigBee Ã¤³Î ÀúÀå
-void ZigBee_Channel_Write(void);					// ZigBee Ã¤³Î ¼³Á¤
-void ZigBee_Read(void);							// ZigBee ¼³Á¤°ª ÀĞ±â
-void ZigBee_Set(void);							// ZigBee Ã¤³Î ¹× PanID ¼³Á¤ ¸ğµå
+void ZigBee_Write_id(void);						// ZigBee PanID ì €ì¥
+void ZigBee_PanID_Write(void);						// ZigBee PanID ì„¤ì •
+void ZigBee_Write_ch(void);						// ZigBee ì±„ë„ ì €ì¥
+void ZigBee_Channel_Write(void);					// ZigBee ì±„ë„ ì„¤ì •
+void ZigBee_Read(void);							// ZigBee ì„¤ì •ê°’ ì½ê¸°
+void ZigBee_Set(void);							// ZigBee ì±„ë„ ë° PanID ì„¤ì • ëª¨ë“œ
 
 //=================================================================================================
 //		END OF "zigbee.h"

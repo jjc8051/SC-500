@@ -7,33 +7,15 @@
 #include <loadcell.h>
 
 //=================================================================================================
-//	loadcell.h 전역 변수 정의
-//=================================================================================================
 double   Cell_RO;
-uint64_t RO_10000;
-uint64_t RO_1000;
-uint64_t RO_100;
-uint64_t RO_10;
-uint64_t RO_1;
+uint64_t RO_10000, RO_1000, RO_100, RO_10, RO_1;
 uint64_t RO;
 uint32_t Cell_Capa;
-uint8_t  CAPA_1000;
-uint8_t  CAPA_100;
-uint8_t  CAPA_10;
-uint8_t  CAPA_1;
-uint8_t  Cell_ID;
-uint8_t  Cell_CNT;
-uint16_t IN_Scales;
-uint8_t  IN_S_10000;
-uint8_t  IN_S_1000;
-uint8_t  IN_S_100;
-uint8_t  IN_S_10;
-uint8_t  IN_S_1;
-uint8_t  Weight_10000;
-uint8_t  Weight_1000;
-uint8_t  Weight_100;
-uint8_t  Weight_10;
-uint8_t  Weight_1;
+uint8_t  CAPA_1000, CAPA_100, CAPA_10, CAPA_1;
+uint8_t  Cell_ID, Cell_CNT;
+int16_t  IN_Scales;
+uint8_t  IN_S_10000, IN_S_1000, IN_S_100, IN_S_10, IN_S_1;
+uint8_t  Weight_10000, Weight_1000, Weight_100, Weight_10, Weight_1;
 
 //=================================================================================================
 void Cell_Desplay(void)								// 로드셀 무게 표시
@@ -58,7 +40,7 @@ void Cell_Desplay(void)								// 로드셀 무게 표시
 		DIGIT[0][1] = fnd_tbl[Weight_10];				// 측정무게  0.10의 자리
 		DIGIT[0][0] = fnd_tbl[Weight_1];				// 측정무게  0.01의 자리
 	}
-	else if(CELL.Value < 1000)						// 측정무게 10Kg 보다 작으면
+	else if(CELL.Value <= 1000)						// 측정무게 10Kg 보다 작으면
 	{
 		DIGIT[0][3] = FND_OFF;						// 측정무게 10.00의 자리 OFF
 		DIGIT[0][2] = fnd_tbl[Weight_100]+FND_Point;			// 측정무게  1.00의 자리
@@ -71,18 +53,14 @@ void Cell_Desplay(void)								// 로드셀 무게 표시
 int32_t Cell_Data_Read(void)							// 로드셀 Data 읽기, HX711 제어
 {
 	int32_t Value = 0;							// Data 저장용 변수 초기화
-	uint16_t timeout = 0;							// 타임아웃 카운터
+	uint16_t hx711_timeout = 0;
 
 	SCK_LOW_1;								// HX711 SCk LOW
-	while(DO1)
+	while(DO1)								// HX711 SDA가 HIGH 이면 대기
 	{
-		_delay_us(25);							// 25us 대기
-		wdt_reset();							// WDT 리셋
-		if(++timeout > 2000)						// 500ms (25us × 2000) 초과 시
-		{
-			return 0;						// HX711 응답 없음, 0 반환
-		}
-	}									// HX711 SDA가 HIGH 이면 대기
+		_delay_us(25);							// 100us 대기
+		if(++hx711_timeout >= 2000) {return 0;}				// 50ms 초과 시 0 반환 (이상 상태)
+	}
 
 	for(uint8_t i = 0; i < 24; i++)						// 24bit Data 만큼 반복
 	{
@@ -98,9 +76,8 @@ int32_t Cell_Data_Read(void)							// 로드셀 Data 읽기, HX711 제어
 	SCK_LOW_1;								// HX711 SCk LOW
 	_delay_ms(100);
 
-	Value = Value ^ 0x400000;						// 전체 Data 의 2의 보수 값 구하기 (Value ^ 0x400000은 버그가 아니라 이 하드웨어에 맞는 의도적인 오프셋 처리)
-
-//	if(Value > Cell_Capa * 10000 + CELL.OFF_Set) {Value = 0;}		// 전체 Data 가 상한값 이상이면 Data 초기화 (if(Value > 0x7FF000) {Value = 0;})
+	Value = Value ^ 0x400000;						// 전체 Data 의 2의 보수 값 구하기
+	if(Value > Cell_Capa * 10000 + CELL.OFF_Set) {Value = 0;}		// 전체 Data 가 상한값 이상이면 Data 초기화 (if(Value > 0x7FF000) {Value = 0;})
 	Proportion_Set();							// 배율 계산
 	Value = Value / CELL.Proportion;					// Data / 배율 = 무게
 	return(Value);
@@ -133,12 +110,12 @@ uint16_t Read_Load_Cell(void)							// 로드셀 측정값 읽기
 				Cell_Zero_Set();				// 로드셀 0 값 찾기
 	 			Value_Count = 0;
 			}
-			else {CELL.OFF_Set = OFF_SET - 5;}			// OFF_Set - 5
+			else {CELL.OFF_Set = OFF_SET -5;}			// OFF_Set - 5
 			ValSum = 0;						// ValSum 을 0으로 초기화
 		}
 		else if(ValSum > 0 && IN_Scales > ValSum)			// ValSum 이 0 보다 크고 입구체중 보다 작으면
 		{
-			CELL.OFF_Set = OFF_SET + 10;				// OFF_Set + 10
+			CELL.OFF_Set = OFF_SET + 5;				// OFF_Set + 10
 			ValSum = 0;						// ValSum 을 0으로 초기화
 		}
 
@@ -155,15 +132,14 @@ void Cell_Zero_Set(void)							// 로드셀 0 값 찾기
 //	int32_t Value_Sum = 0;							// 측정 값 계산 변수 초기화
 
 	Value = Cell_Data_Read();						// 로드셀 Data 읽기
-
-//	do{
-//		Value_Sum = CELL.OFF_Set - Value;				// 로드셀 OFF_Set 초기값(20Kg) - Data = Value_Sum
-//		if     (Value_Sum > 0) {CELL.OFF_Set = CELL.OFF_Set - Value_Sum;}	// Value_Sum 값이 0 보다   크면 OFF_Set - Value_Sum 해서 OFF_Set에 저장
-//		else if(Value_Sum < 0) {CELL.OFF_Set = CELL.OFF_Set + Value_Sum;}	// Value_Sum 값이 0 보다 작으면 OFF_Set + Value_Sum 해서 OFF_Set에 저장
-//	}while(Value_Sum != 0);							// !Value_Sum 이 0 일때까지 반복
-
-	CELL.OFF_Set = Value;							// ← do-while 루프 전체를 이 한 줄로 교체
-
+/*
+	do{
+		Value_Sum = CELL.OFF_Set - Value;				// 로드셀 OFF_Set 초기값(20Kg) - Data = Value_Sum
+		if     (Value_Sum > 0) {CELL.OFF_Set = CELL.OFF_Set - Value_Sum;}	// Value_Sum 값이 0 보다   크면 OFF_Set - Value_Sum 해서 OFF_Set에 저장
+		else if(Value_Sum < 0) {CELL.OFF_Set = CELL.OFF_Set + Value_Sum;}	// Value_Sum 값이 0 보다 작으면 OFF_Set + Value_Sum 해서 OFF_Set에 저장
+	}while(Value_Sum != 0);							// !Value_Sum 이 0 일때까지 반복
+*/
+	CELL.OFF_Set = Value;							// 현재값을 영점으로 설정
 	Beep(10);
 	wdt_reset();								// Reset WDT
 }
@@ -396,8 +372,8 @@ void Interval_Set(void)								// Interval 설정
 
 		if(KEY.Buff)							// Key 입력이 있으면
 		{
-			if     (KEY.Key == 1 && RO < 90000) {RO = RO + 10; KEY.Key = 0;}	// 업  버튼 이면 RO 값 10의 자리 증가
-			else if(KEY.Key == 3 && RO >=   10) {RO = RO - 10; KEY.Key = 0;}	// 다운버튼 이면 RO 값 10의 자리 감소
+			if     (KEY.Key == 1) {RO = RO + 10; KEY.Key = 0;}	// 업  버튼 이면 RO 값 10의 자리 증가
+			else if(KEY.Key == 3) {RO = RO - 10; KEY.Key = 0;}	// 다운버튼 이면 RO 값 10의 자리 감소
 
 			DIGIT[1][3] = fnd_tbl[RO / 10000];			// 로드셀 RO 10000의 자리
 			DIGIT[1][2] = fnd_tbl[RO % 10000 / 1000];		// 로드셀 RO  1000의 자리
@@ -412,6 +388,7 @@ void Interval_Set(void)								// Interval 설정
 		{
 			if((Old_Value <= Value + Admit_Weight) && (Old_Value >= Value - Admit_Weight))
 			{							// 이전체중이 측정체중과 인증체중(25x10g)을 더한값과 같거나 작고 인증체중(25x10g)을 뺀값과 같거나 크면서 이전체중과 같으면
+//-------------------------------------------------------------------------------------------------
 				CELL.Value = Old_Value;
 				Zero_Count = 0;
 			}

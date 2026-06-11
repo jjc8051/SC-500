@@ -82,6 +82,7 @@ uint8_t ee_write_byte(uint16_t eeprom_adr, uint8_t data)
 {
 	if (eeprom_adr > 511) {
 		eeprom_adr = 511;
+
 		return 0;
 	}
 	/* Wait for completion of previous operation */
@@ -111,12 +112,13 @@ uint8_t ee_write_word(uint16_t eeprom_adr, uint16_t data)
 
 	if (eeprom_adr > 511 - 1) {
 		eeprom_adr = 511 - 1;
+
 		return 0;
 	}
-
 	mergeData.u32d0 = (uint32_t)data;
 	ee_write_byte(eeprom_adr + 0, mergeData.u8d0);
 	ee_write_byte(eeprom_adr + 1, mergeData.u8d1);
+
 	return 1;
 }
 
@@ -134,6 +136,7 @@ uint8_t ee_write_dword(uint16_t eeprom_adr, uint32_t data)
 	DATA_MERGE_T mergeData;
 	if (eeprom_adr > 511 - 3) {
 		eeprom_adr = 511 - 3;
+
 		return 0;
 	}
 
@@ -142,6 +145,7 @@ uint8_t ee_write_dword(uint16_t eeprom_adr, uint32_t data)
 	ee_write_byte(eeprom_adr + 1, mergeData.u8d1);
 	ee_write_byte(eeprom_adr + 2, mergeData.u8d2);
 	ee_write_byte(eeprom_adr + 3, mergeData.u8d3);
+
 	return 1;
 }
 
@@ -159,14 +163,19 @@ uint8_t ee_update_byte(uint16_t eeprom_adr, uint8_t data)
 	DATA_MERGE_T mergeData;
 	if (eeprom_adr > 511) {
 		eeprom_adr = 511;
+
 		return 0;
 	}
 
 	mergeData.u32d0 = (uint32_t)data;
-	if (ee_read_byte(eeprom_adr) != mergeData.u8d0)	{
+	if (ee_read_byte(eeprom_adr) != mergeData.u8d0) {
 		ee_write_byte(eeprom_adr, mergeData.u8d0);
+
 		return 1;
-	} else { return 0; }								// 이전값과 같으므로 쓰기안하고 함수종료
+	} else {
+		// 이전값과 같으므로 쓰기안하고 함수종료
+		return 0;
+	}
 }
 
 //=================================================================================================
@@ -184,6 +193,7 @@ uint8_t ee_update_word(uint16_t eeprom_adr, uint16_t data)
 
 	if (eeprom_adr > 511 - 1) {
 		eeprom_adr = 511 - 1;
+
 		return 0;
 	}
 
@@ -191,8 +201,12 @@ uint8_t ee_update_word(uint16_t eeprom_adr, uint16_t data)
 	if (ee_read_word(eeprom_adr) != mergeData.u16d0) {
 		ee_write_byte(eeprom_adr + 0, mergeData.u8d0);
 		ee_write_byte(eeprom_adr + 1, mergeData.u8d1);
+
 		return 1;
-	} else { return 0; }
+	} else {
+
+		return 0;
+	}
 }
 
 //=================================================================================================
@@ -220,7 +234,10 @@ uint8_t ee_update_dword(uint16_t eeprom_adr, uint32_t data)
 		ee_write_byte(eeprom_adr + 3, mergeData.u8d3);
 
 		return 1;
-	} else { return 0; }
+	} else {
+
+		return 0;
+	}
 }
 
 //=================================================================================================

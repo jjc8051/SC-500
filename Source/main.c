@@ -22,17 +22,17 @@
 //			펌웨어 이력
 //=================================================================================================
 //
-//	2022-1213	: Pig_Scales V3.1을 기본으로 SC-500 펌웨어 이식 작업 시작
-//			: 250Kg 로드셀 4개짜리 1개의 장비만 설정
-//	2022-1216	: 기존 Pig_Scales V3.1을 1개의 로드셀만 표시하도록 처리 완료
+//	2022-1213	Pig_Scales V3.1을 기본으로 SC-500 펌웨어 이식 작업 시작
+//			250Kg 로드셀 4개짜리 1개의 장비만 설정
+//	2022-1216	기존 Pig_Scales V3.1을 1개의 로드셀만 표시하도록 처리 완료
 //
-//	2022-1220	: 측정체중이 안정 적이면 FND 1에 ----- 표시
-//			: 선택(Select)Key 가 눌려지고, 측정체중이 안정 되어 있으면 무게 측정 OK 처리
-//			: 통신 프로토콜 적용 송신 루틴 정리
+//	2022-1220	측정체중이 안정 적이면 FND 1에 ----- 표시
+//			선택(Select)Key 가 눌려지고, 측정체중이 안정 되어 있으면 무게 측정 OK 처리
+//			통신 프로토콜 적용 송신 루틴 정리
 //
-//	2022-1221	: Normal Mode 일때 +(UP) ▲ key 가 눌리면 방 번호설정 모드로 진입
-//			: 상, 하 Key 로 설정 후 선택버튼을 누르면 스톨번호 설정모드 진입
-//			: 상, 하 Key 로 설정 후 선택버튼을 누르면 설정 완료, 저장 후 Normal Mode 로 복귀
+//	2022-1221	Normal Mode 일때 +(UP) ▲ key 가 눌리면 방 번호설정 모드로 진입
+//			상, 하 Key 로 설정 후 선택버튼을 누르면 스톨번호 설정모드 진입
+//			상, 하 Key 로 설정 후 선택버튼을 누르면 설정 완료, 저장 후 Normal Mode 로 복귀
 //
 //	2022-1222	: Normal Mode 일때 선택 Key 입력이 있으면 무게를 측정하고 Data 저장, 카운터 증가
 //			: 선택(저장) 입력이 없으면 무게 안정화 시 FND 1에 ----- 표시,
@@ -78,32 +78,6 @@
 //			: FND 꺼진 상태에서 통신 작업 진행, 	FND 꺼지는 시간 늘림  30분에서 30분으로...
 //			: 펌웨어 버젼 표시 V4.6으로 변경
 //
-//	2026-0611	: 버그 수정 (코드 분석 및 전면 검토)
-//			: [loadcell.c] Cell_Zero_Set() do-while 무한루프 제거 → CELL.OFF_Set = Value 단순화
-//			: [tca.c]      TCA1 타이머 주기 수정 : PER 0x000E(1ms) → 0x0047(5ms)
-//			: [main.c]     Read_eeprom_Weight_Data() EEPROM 주소 오류 수정 : MEASURE_MIN → MEASURE_SEC
-//			: [main.c]     Receiv_PC() IN_Scales 파싱 오류 수정 : & → |, 인덱스 [8]→[9] 추가
-//			: [main.c]     Receiv_PC() 버퍼 범위 초과 수정 : cnt < RX3_SIZE → cnt < RX3_SIZE - 31
-//			: [main.c]     Read_eeprom() uint8_t < 0 항상 false 수정 : OLD_D/Cell_ID < 0 → == 0
-//			: [main.c]     Read_eeprom() Auto_Mode 범위 검사 수정 : > 2 || < 0 → > 2
-//			: [loadcell.c] Interval_Set() RO 상하한 조건 추가 (언더플로우 방지)
-//			: [loadcell.c] Cell_Data_Read() HX711 24bit 부호 확장 수정 : XOR → sign extension
-//			: [zigbee.c]   ZigBee AT 응답 파싱 버퍼 범위 수정 : cnt < RX3_SIZE → cnt < RX3_SIZE - 2
-//			: [main.c]     Proportion_Set() 정수 나누기 오류 수정 : Cell_RO → (double)Cell_RO
-//			: [main.c]     Check_Value() 비트 AND 수정 : & → &&
-//			: [loadcell.c] Interval_Set() 비트 AND 수정 : & → &&
-//			: [driver_isr.c] USART ISR 버퍼 오버플로우 수정 : 증가 후 범위 체크로 순서 변경
-//			: [main.c]     Time_Check() memset 크기 수정 : 300 → sizeof() 사용
-//
-//			: 로드셀 설정 순서
-//
-// 			: 1. CAPA  설정  ← 로드셀 정격 용량 (예: 200kg → 0200 입력)		: 0020
-// 			: 2. CNT   설정  ← 로드셀 갯수 (1/2/4개)				: 1
-// 			: 3. ID    설정  ← 이 장비의 Cell ID 번호				: 1
-// 			: 4. RO    설정  ← 로드셀 RO 계수 (데이터시트 참조)			: 1.9214
-// 			: 5. SCal  조정  ← 실제 기준 무게 올려놓고 RO값 미세 조정
-// 			: 6. IN-S  설정  ← 입구 체중 하한값 (이 이하는 무게로 인정 안 함)	: 0.100
-//
 //=================================================================================================
 #include <main.h>
 #include <avr/fuse.h>
@@ -119,11 +93,7 @@ FUSES =
 };
 
 //=================================================================================================
-const uint8_t fnd_tbl[]={FND_0, FND_1, FND_2, FND_3, FND_4, FND_5, FND_6, FND_7, FND_8, FND_9, FND_MINUS, FND_Point, FND_OFF};
-//FND 숫자 테이블	{    0,     1,     2,     3,     4,     5,     6,     7,     8,     9,         -,         .,     OFF}
-
-//=================================================================================================
-//	typedefine.h 구조체 인스턴스 정의
+//	전역변수 실체 정의 (typedefine.h 에서 extern 선언, 여기서 1회만 정의)
 //=================================================================================================
 _RTC_T    RTC_T;
 _TIMER    Timer;
@@ -133,26 +103,11 @@ _RoadCell CELL;
 _SaveData SAVE;
 
 //=================================================================================================
-uint8_t DIGIT[3][4] = {{0}};
+const uint8_t fnd_tbl[]={FND_0, FND_1, FND_2, FND_3, FND_4, FND_5, FND_6, FND_7, FND_8, FND_9, FND_MINUS, FND_Point, FND_OFF};
+//FND 숫자 테이블	{    0,     1,     2,     3,     4,     5,     6,     7,     8,     9,         -,         .,     OFF}
 
 //=================================================================================================
-uint8_t Gukbun;									// cnt1 변수 초기화
-uint8_t Gwid;									// cnt1 변수 초기화
-uint8_t Auto_Mode;								// cnt1 변수 초기화
-
-uint8_t OK_Count_1;								// OK Count 1
-uint8_t OK_Count_2;								// OK Count 2
-uint8_t Zero_Count;								// Zero_Count 증가
-uint8_t Value_Count;								// Count 변수 초기화
-
-uint8_t Time_Count;								// Count 변수 초기화
-uint16_t Sec_Count;								// Count 변수 초기화
-uint8_t SECOND;									// 입구 체중 변수
-
-uint16_t Data_Number;								// 입구 체중 변수
-uint8_t Room_Number;								// 방번호 설정값을 1 으로 초기화
-uint8_t Stal_Number;								// ChkSum 변수 초기화
-uint16_t EepCnt;
+uint8_t DIGIT[3][4] = {{0}};
 
 //=================================================================================================
 void MCU_Init(void)								// AVR128DA64 MCU Initialize
@@ -295,7 +250,8 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 //		저장된 날짜 Date
 //-------------------------------------------------------------------------------------------------
 	RTC_T.OLD_D = ee_read_byte(OLD_Date_Addr);				// 날짜 설정값 불러오기
-	if(RTC_T.OLD_D > 31 || RTC_T.OLD_D == 0)				// 날짜 설정값이 31일보다 크거나 0보다 작으면
+//	if(RTC_T.OLD_D > 31 || RTC_T.OLD_D < 0)					// 날짜 설정값이 31일보다 크거나 0보다 작으면
+	if(RTC_T.OLD_D > 31)							// 날짜 설정값이 31일보다 크면
 	{
 		RTC_T.OLD_D = 1;						// 날짜 설정값을 1로 초기화
 		ee_write_byte(OLD_Date_Addr, RTC_T.OLD_D);			// 날짜 설정값을 EEPROM 에 저장
@@ -304,7 +260,8 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 //		로드셀 ID
 //-------------------------------------------------------------------------------------------------
 	Cell_ID = ee_read_byte(Cell_ID_Addr);					// 로드셀 ID 설정값 불러오기
-	if(Cell_ID > 60 || Cell_ID == 0)					// 로드셀 ID 설정값이 60보다 크거나 0보다 작으면
+//	if(Cell_ID > 60 || Cell_ID < 0)						// 로드셀 ID 설정값이 60보다 크거나 0보다 작으면
+	if(Cell_ID > 60)							// 로드셀 ID 설정값이 60보다 크면
 	{
 		Cell_ID = 1;							// 로드셀 ID 설정값을 1로 초기화
 		ee_write_byte(Cell_ID_Addr, Cell_ID);				// 로드셀 ID 설정값을 EEPROM 에 저장
@@ -322,23 +279,16 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 //		로드셀 CAPA (용량)
 //-------------------------------------------------------------------------------------------------
 	Cell_Capa = ee_read_word(Cell_Capa_Addr);				// 로드셀 CAPA 설정값 불러오기
-	if(Cell_Capa > 1000 || Cell_Capa < 10)					// 로드셀 CAPA 설정값이 1000보다 크거나 10보다 작으면
-	{
-		Cell_Capa = 10;							// 로드셀 CAPA 설정값을 10kg로 초기화, 곱하기 1,000으로 계산 10kg = 10000g
-		ee_write_word(Cell_Capa_Addr, Cell_Capa);			// 로드셀 CAPA 설정값을 EEPROM 에 저장
-	}
-/*
 	if(Cell_Capa > 1000 || Cell_Capa < 100)					// 로드셀 CAPA 설정값이 1000보다 크거나 100보다 작으면
 	{
 		Cell_Capa = 100;						// 로드셀 CAPA 설정값을 100kg로 초기화, 곱하기 1,000으로 계산 100kg = 100000g
 		ee_write_word(Cell_Capa_Addr, Cell_Capa);			// 로드셀 CAPA 설정값을 EEPROM 에 저장
 	}
-*/
 //-------------------------------------------------------------------------------------------------
 //		로드셀 RO (정격출력)
 //-------------------------------------------------------------------------------------------------
 	Cell_RO = ee_read_dword(Cell_RO_Addr);					// 로드셀 RO 설정값 불러오기
-	if(Cell_RO > 99900 || Cell_RO < 10000)					// 로드셀 RO 설정값이 9.990mV보다 크거나 1.000mV보다 작으면
+	if(Cell_RO > 90000 || Cell_RO < 10000)					// 로드셀 RO 설정값이 9.000mV보다 크거나 3.000mV보다 작으면
 	{
 		Cell_RO = 40000;						// 로드셀 RO 설정값을 4.000mV로 초기화, 나누기 10,000으로 계산
 		ee_write_dword(Cell_RO_Addr, Cell_RO);				// 로드셀 RO 설정값을 EEPROM 에 저장
@@ -374,7 +324,8 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 //		자동모드 설정 값
 //-------------------------------------------------------------------------------------------------
 	Auto_Mode = ee_read_byte(Cell_AUTO_Addr);				// 자동모드 설정값 불러오기
-	if(Auto_Mode > 2)							// 자동모드 설정값이 2보다 크거나 0보다 작으면
+//	if(Auto_Mode > 2 || Auto_Mode < 0)					// 자동모드 설정값이 2보다 크거나 0보다 작으면
+	if(Auto_Mode > 2)							// 자동모드 설정값이 2보다 크면
 	{
 		Auto_Mode = 1;							// 자동모드 설정값을 0 으로 초기화
 		ee_write_byte(Cell_AUTO_Addr, Auto_Mode);			// 자동모드 설정값을 EEPROM 에 저장
@@ -394,7 +345,7 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 		RTC_Time_Write(RTC_YEAR,      23);				// RTC 에 23년   저장
 		RTC_Time_Write(RTC_MONTH,      4);				// RTC 에 04월   저장
 		RTC_Time_Write(RTC_DATE,      05);				// RTC 에 05일   저장
-		RTC_Time_Write(RTC_DAYOFWEEK,  4);				// RTC 에 요일   저장
+		RTC_Time_Write(RTC_DAYOFWEEK,  4);				// RTC 에 04요일 저장
 		RTC_Time_Write(RTC_HOUR,      12);				// RTC 에 12시   저장
 		RTC_Time_Write(RTC_MINUTE,     0);				// RTC 에 00분   저장
 		RTC_Time_Write(RTC_SECOND,     0);				// RTC 에 00초   저장
@@ -404,7 +355,8 @@ void Read_eeprom(void)								// EEPROM Data 읽기
 //		Data 번호 값
 //-------------------------------------------------------------------------------------------------
 	EepCnt = ee_read_word(Data_Count_Addr);                                 // Data 번호 설정값 불러오기
-	if(EepCnt > 300)							// Data번호 설정값이 100보다 크거나 0과 같거나 작으면
+//	if(EepCnt > 300 || EepCnt < 0)					        // Data번호 설정값이 100보다 크거나 0과 같거나 작으면
+	if(EepCnt > 35)					       			// Data번호 설정값이 35보다 크면
  	{
  		EepCnt = 0;
  		ee_write_word(Data_Count_Addr, Data_Number);                    // Data 번호 설정값을 EEPROM 에 저장
@@ -450,11 +402,11 @@ void eeprom_Data_erase(uint16_t cnt)						// EEPROM Weight Data 지우기
 //=================================================================================================
 void Alarm(void)								// 알람(비프 3번)
 {
-	Beep(15);								// 1mSec X 15 = 15mSec
+	Beep(15);								// 5mSec X 15 = 75mSec
 	_delay_ms(120);								// Time Delay  120mSec
-	Beep(15);								// 1mSec X 15 = 15mSec
+	Beep(15);								// 5mSec X 15 = 75mSec
 	_delay_ms(120);								// Time Delay  120mSec
-	Beep(15);								// 1mSec X 15 = 15mSec
+	Beep(15);								// 5mSec X 15 = 75mSec
 }
 
 //=================================================================================================
@@ -693,6 +645,9 @@ void Check_Value(void)								// 로드셀 체중측정
 			FND_Value_Data(1, 1, 10);				// FND 1 FND_MINUS 표시
 			if((SET.Save || Auto_Mode) && !CELL.Zero_Buff)		// 저장 Key 가 눌렸거나 자동모드 이면서 CELL.Zero_Buff 가 0이면
 			{
+				if(Data_Number < 299) {Data_Number++;}		// 저장횟수 가 0 ~ 299(300개)보다 작으면 저장횟수 증가
+				else		      {Data_Number = 0;}	// 아니면 저장횟수 초기화
+//-------------------------------------------------------------------------------------------------
 				SAVE.AutoSet[Data_Number] = Auto_Mode;
 				SAVE.Count  [Data_Number] = Data_Number;
 				SAVE.Data   [Data_Number] = CELL.Value = CELL.Old_Value;
@@ -705,6 +660,8 @@ void Check_Value(void)								// 로드셀 체중측정
 				SAVE.Min    [Data_Number] = RTC_Single_Read(RTC_MINUTE);	// MINUTE
 				SAVE.Sec    [Data_Number] = RTC_Single_Read(RTC_SECOND);	// SECOND
 
+				if(EepCnt < 35) {EepCnt++;}			// EEPROM 저장횟수 가 0 ~ 34(35개)보다 작으면 저장횟수 증가
+				else		{EepCnt = 0;}			// 아니면 EEPROM 저장횟수 초기화
 //-------------------------------------------------------------------------------------------------
 				ee_write_byte(MEASURE_AUTO   + (MEASURE_LENGTH * EepCnt), Auto_Mode);
 				ee_write_word(MEASURE_COUNT  + (MEASURE_LENGTH * EepCnt), Data_Number);
@@ -717,14 +674,7 @@ void Check_Value(void)								// 로드셀 체중측정
 				ee_write_byte(MEASURE_HOUR   + (MEASURE_LENGTH * EepCnt), RTC_Single_Read(RTC_HOUR));
 				ee_write_byte(MEASURE_MIN    + (MEASURE_LENGTH * EepCnt), RTC_Single_Read(RTC_MINUTE));
 				ee_write_byte(MEASURE_SEC    + (MEASURE_LENGTH * EepCnt), RTC_Single_Read(RTC_SECOND));
-
-				if(Data_Number < 299) {Data_Number++;}		// 저장횟수 가 0 ~ 299(300개)보다 작으면 저장횟수 증가
-				else		      {Data_Number = 0;}	// 아니면 저장횟수 초기화
-
-				if(EepCnt < 35) {EepCnt++;}			// EEPROM 저장횟수 가 0 ~ 34(35개)보다 작으면 저장횟수 증가
-				else		{EepCnt = 0;}			// 아니면 EEPROM 저장횟수 초기화
-
-				ee_write_word(Data_Count_Addr, EepCnt);		// 다음 쓸 위치 저장
+				ee_write_word(Data_Count_Addr, EepCnt);
 
 //-------------------------------------------------------------------------------------------------
 				CELL.Zero_Buff = 1;
@@ -775,6 +725,7 @@ void Check_Value(void)								// 로드셀 체중측정
 		Zero_Count++;							// Zero_Count 증가
 		if(Zero_Count > 5)						// Zero_Count 이 2보다 크면
 		{
+			if(CELL.Zero_Buff) {Cell_Zero_Set();}			// 측정 후 무게 사라지면 0값 재설정
 			CELL.Old_Value = 0;					// 이전측정체중 초기화
 			CELL.Over_Value = 0;					// 이전측정체중 초기화
 			CELL.Value = Value;
@@ -785,7 +736,6 @@ void Check_Value(void)								// 로드셀 체중측정
 			if(!SET.Save) {Stal_Desplay();}				// Save 모드가 아니면 스톨 번호 표시
 			Room_Desplay();						// 방 번호 표시
 			Cell_Desplay();						// 측정체중 표시
-			Cell_Zero_Set();					// 로드셀 0 값 재조정
 		}
 	}
 }
@@ -937,22 +887,23 @@ void Receiv_PC(void)								// PC로 부터 데이터수신
 
 		else if(Rx3_Buff[cnt] == STX_Iontec && Rx3_Buff[cnt + 1] == PC2CTL && Rx3_Buff[cnt + 2] == 0x01 && Rx3_Buff[cnt + 4] == 7 && Rx3_Buff[cnt + 31] == ETX_Iontec)
 		{//			     STX			    PC2CTL			  선별기		설정정보(입구체중)		       ETX
-			Rx_LED_ON;							// RX LED ON
-			ChkSum = 0;							// ChkSum 초기화
+			Rx_LED_ON;								// RX LED ON
+			ChkSum = 0;								// ChkSum 초기화
 
 			for(cnt1 = 1; cnt1 < 30; cnt1++) {ChkSum += Rx3_Buff[cnt + cnt1];}	// 체크썸 계산
 
-			if(ChkSum == Rx3_Buff[cnt + 30])				// 체크썸 확인
+			if(ChkSum == Rx3_Buff[cnt + 30])					// 체크썸 확인
 			{
-				IN_S = (Rx3_Buff[cnt + 8] << 8) | Rx3_Buff[cnt + 9];	// 입구체중 값 변환
-				if(Rx3_Buff[cnt + 3] == Cell_ID)			// Cell ID 1번 이면
+//				IN_S = Rx3_Buff[cnt + 8] << 8 & Rx3_Buff[cnt + 8];		// 입구체중 값 변환
+				IN_S = ((uint16_t)Rx3_Buff[cnt + 8] << 8) | Rx3_Buff[cnt + 9];	// 입구체중 값 변환
+				if(Rx3_Buff[cnt + 3] == Cell_ID)				// Cell ID 1번 이면
 				{
-					IN_Scales = IN_S;				// 입구체중 값을 로드셀 1번에 적용
-					ee_write_word(Cell_IN_S_Addr, IN_S);		// 입구체중 값을 EEPROM에 저장
-					Tx_LED_ON;					// TX LED ON
-					Send_To_Server_1(Rx3_Buff[cnt + 4]);		// 설정정보 PC로 전송
+					IN_Scales = IN_S;					// 입구체중 값을 로드셀 1번에 적용
+					ee_write_word(Cell_IN_S_Addr, IN_S);			// 입구체중 값을 EEPROM에 저장
+					Tx_LED_ON;						// TX LED ON
+					Send_To_Server_1(Rx3_Buff[cnt + 4]);			// 설정정보 PC로 전송
 					_delay_ms(2);
-					Tx_LED_OFF;					// TX LED OFF
+					Tx_LED_OFF;						// TX LED OFF
 				}
 			}
 		}
@@ -1000,10 +951,8 @@ void Time_Check(void)								// 시간 체크
 //=================================================================================================
 void Proportion_Set(void)							// 로드셀 비율 설정 및 초기화
 {
-//	CELL.Proportion = (Cell_RO / 10000000 / 4 * 128 / 0.5 * 8388608 / (Cell_Capa * 1000)) / Cell_CNT;
-//	로드셀 비율 = (RO 총합 / 10000000(mV) / ADC 입력전압 X 게인 / 0.5 * ADC Bit/ (CAPA 총합 X 1000)) / 로드셀갯수
+	CELL.Proportion = (Cell_RO / 10000000 / 4 * 128 / 0.5 * 8388608 / (Cell_Capa * 1000)) / Cell_CNT;
 
-	CELL.Proportion = ((double)Cell_RO / 10000000 / 4 * 128 / 0.5 * 8388608 / (Cell_Capa * 1000)) / Cell_CNT;
 //	로드셀 비율 = (RO 총합 / 10000000(mV) / ADC 입력전압 X 게인 / 0.5 * ADC Bit/ (CAPA 총합 X 1000)) / 로드셀갯수
 }
 
