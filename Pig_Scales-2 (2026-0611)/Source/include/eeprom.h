@@ -1,7 +1,7 @@
 /**
  * @file eeprom.h
  * @author LJY (ejok9194@gmail.com)
- * @brief AVRxxxDx Series eeprom ÇÔ¼ö Æß¿ş¾î Çì´õ
+ * @brief AVRxxxDx Series eeprom í•¨ìˆ˜ íŒì›¨ì–´ í—¤ë”
  * @version 1.0
  * @date 2022-01-25
  *
@@ -12,7 +12,7 @@
 #ifndef EEPROM_H_
 #define EEPROM_H_
 
-#include <ccp.h> // AVR128dxxx Register ¾²±â ÇÔ¼ö Á¤ÀÇ Çì´õ
+#include <ccp.h> // AVR128dxxx Register ì“°ê¸° í•¨ìˆ˜ ì •ì˜ í—¤ë”
 #include <stdint.h>
 
 //=================================================================================================

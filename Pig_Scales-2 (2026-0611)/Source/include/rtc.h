@@ -1,6 +1,6 @@
 //=================================================================================================
 //		File  Name	:	rtc.h
-//		File  ≥ªøÎ	:	rtc ∆ﬂø˛æÓ «Ï¥ı
+//		File  ÎÇ¥Ïö©	:	rtc ÌéåÏõ®Ïñ¥ Ìó§Îçî
 //=================================================================================================
 #ifndef __RTC_H__
 #define __RTC_H__
@@ -9,15 +9,15 @@
 #include <main.h>
 #include <typedefine.h>
 //=================================================================================================
-#define RTC_ADDRESS		0x68				// DS1307+ æÓµÂ∑πΩ∫
+#define RTC_ADDRESS		0x68				// DS1307+ Ïñ¥ÎìúÎ†àÏä§
 
 //=================================================================================================
-void RTC_Set(void);						// RTC º≥¡§ ∏µÂ
+void RTC_Set(void);						// RTC ÏÑ§Ï†ï Î™®Îìú
 
-uint8_t RTC_Single_Read(uint8_t reg);				// RTC 1Byte Data ¿–±‚
-void RTC_Time_Read(void);					// RTC Data ¿–±‚
-void RTC_Single_Write(uint8_t reg, uint8_t wData);		// RTC 1Byte Data æ≤±‚
-void RTC_Time_Write(uint8_t item, uint8_t value);		// RTC Data æ≤±‚
+uint8_t RTC_Single_Read(uint8_t reg);				// RTC 1Byte Data ÏùΩÍ∏∞
+void RTC_Time_Read(void);					// RTC Data ÏùΩÍ∏∞
+void RTC_Single_Write(uint8_t reg, uint8_t wData);		// RTC 1Byte Data Ïì∞Í∏∞
+void RTC_Time_Write(uint8_t item, uint8_t value);		// RTC Data Ïì∞Í∏∞
 //=================================================================================================
 //		END OF "rtc.h"
 //=================================================================================================
