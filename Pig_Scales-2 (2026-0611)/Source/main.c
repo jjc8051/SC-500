@@ -117,22 +117,22 @@ const uint8_t fnd_tbl[]={FND_0, FND_1, FND_2, FND_3, FND_4, FND_5, FND_6, FND_7,
 uint8_t DIGIT[3][4] = {{0}};
 
 //=================================================================================================
-uint8_t Gukbun;							// cnt1 변수 초기화
-uint8_t Gwid;							// cnt1 변수 초기화
-uint8_t Auto_Mode;						// cnt1 변수 초기화
+uint8_t Gukbun;									// cnt1 변수 초기화
+uint8_t Gwid;									// cnt1 변수 초기화
+uint8_t Auto_Mode;								// cnt1 변수 초기화
 
-uint8_t OK_Count_1;						// OK Count 1
-uint8_t OK_Count_2;						// OK Count 2
-uint8_t Zero_Count;						// Zero_Count 증가
-uint8_t Value_Count;						// Count 변수 초기화
+uint8_t OK_Count_1;								// OK Count 1
+uint8_t OK_Count_2;								// OK Count 2
+uint8_t Zero_Count;								// Zero_Count 증가
+uint8_t Value_Count;								// Count 변수 초기화
 
-uint8_t Time_Count;						// Count 변수 초기화
-uint16_t Sec_Count;						// Count 변수 초기화
-uint8_t SECOND;							// 입구 체중 변수
+uint8_t Time_Count;								// Count 변수 초기화
+uint16_t Sec_Count;								// Count 변수 초기화
+uint8_t SECOND;									// 입구 체중 변수
 
-uint16_t Data_Number;						// 입구 체중 변수
-uint8_t Room_Number;						// 방번호 설정값을 1 으로 초기화
-uint8_t Stal_Number;						// ChkSum 변수 초기화
+uint16_t Data_Number;								// 입구 체중 변수
+uint8_t Room_Number;								// 방번호 설정값을 1 으로 초기화
+uint8_t Stal_Number;								// ChkSum 변수 초기화
 uint16_t EepCnt;
 
 //=================================================================================================
@@ -165,7 +165,7 @@ void Fnd_Display(void)								// FND Display
 		for(uint8_t i = 0; i < 8; i++)					// FND 8bit data 전송(고정)
 		{
 			HC595_SHIFT_OFF;					// 8 X 1 bit Data Shift 전 HC595 SHIFT OFF
-			if((DIGIT[j][cnt] >> i) & 0x01) {HC595_DATA_ON;}	// DIGIT[FND번호][DIGIT번호] 가 1 이면 HC595_DATA_ON 
+			if((DIGIT[j][cnt] >> i) & 0x01) {HC595_DATA_ON;}	// DIGIT[FND번호][DIGIT번호] 가 1 이면 HC595_DATA_ON
 			else				{HC595_DATA_OFF;}	// DIGIT[FND번호][DIGIT번호] 가 0 이면 HC595_DATA_OFF
 			HC595_SHIFT_ON;						// 8 X 1 bit Data Shift 후 HC595 SHIFT ON
 		}
@@ -215,7 +215,7 @@ void Key_Scan(void)								// key 입력 체크
 {
 	if(!KEY.Buff)								// Key 입력이 없었으면
 	{
-		if(keytemp & 0x10) {Beep(10); KEY.Key = 1; KEY.Buff = 1; Timer.RegExitTimer = 0; Sec_Count = 0;}	// +(UP)  ▲ key 입력이 있으면 
+		if(keytemp & 0x10) {Beep(10); KEY.Key = 1; KEY.Buff = 1; Timer.RegExitTimer = 0; Sec_Count = 0;}	// +(UP)  ▲ key 입력이 있으면
 		if(keytemp & 0x20) {Beep(10); KEY.Key = 2; KEY.Buff = 1; Timer.RegExitTimer = 0; Sec_Count = 0;}	// Select   key 입력이 있으면
 		if(keytemp & 0x40) {Beep(10); KEY.Key = 3; KEY.Buff = 1; Timer.RegExitTimer = 0; Sec_Count = 0;}	// -(Down)▼ key 입력이 있으면
 		if(keytemp & 0x80) {Beep(10); KEY.Key = 4; KEY.Buff = 1; Timer.RegExitTimer = 0; Sec_Count = 0;}	// Menu     key 입력이 있으면
@@ -223,7 +223,7 @@ void Key_Scan(void)								// key 입력 체크
 		if(KEY.Key == 4)						// Menu key 입력이 있으면
 		{
 			if(SET.Menu) {SET.Menu = 0;}				// 메뉴모드 = 1 이면 메뉴모드 해제
-			else	     {SET.Menu = 1;}				// 메뉴모드 = 0 이면 메뉴모드 설정 
+			else	     {SET.Menu = 1;}				// 메뉴모드 = 0 이면 메뉴모드 설정
 		}
 
 		if(SET.Menu && KEY.Key == 2 && !SET.Blink)			// 메뉴모드 이고 Blink = 0 이고 선택 Key 입력이 있으면
@@ -422,7 +422,7 @@ void eeprom_Data_erase(uint16_t cnt)						// EEPROM Weight Data 지우기
 
 
 //=================================================================================================
-void Alarm(void)								// 알람(비프 3번) 
+void Alarm(void)								// 알람(비프 3번)
 {
 	Beep(15);								// 1mSec X 15 = 15mSec
 	_delay_ms(120);								// Time Delay  120mSec
@@ -782,7 +782,7 @@ void Send_To_Server_0(void)							// PC로 데이터 전송 (1회 1개씩 전송
 	SerialData[cnt++] = CTL2PC;						//  1 : 데이터방향
 	SerialData[cnt++] = SORTING_MOVE;					//  2 : 21 장비기종 : 이동형 선별기(포유자돈, 비육돈)
 	SerialData[cnt++] = Cell_ID;						//  3 : 장비id (Cell_ID)
-	SerialData[cnt++] = CD_STATUS;						//  4 : 0 : 구분코드 (실시간상태 정보) 
+	SerialData[cnt++] = CD_STATUS;						//  4 : 0 : 구분코드 (실시간상태 정보)
 
 	SerialData[cnt++] = FW_VER;						//  5 : Protocol Version 41
 	SerialData[cnt++] = Gwid;						//  6 : GWID
@@ -1043,7 +1043,7 @@ int main(void)
 	printf("\r\n");
 	printf("//=================================================//\r\n");
 	printf("//===  Product Name : Pig Scales 2 V%d.%d(SC-500) ===//\r\n",FW_VER / 10, FW_VER % 10);	// ProductName
-	printf("//===  File Content : Moving Weight Scales      ===//\r\n");				// File 내용 : 이동형 체중 측정기 
+	printf("//===  File Content : Moving Weight Scales      ===//\r\n");				// File 내용 : 이동형 체중 측정기
 	printf("//===  Compiled     : %s, %s     ===//\r\n", __DATE__, __TIME__);			// Compiled : 날짜, 시간 표시
 	printf("//=================================================//\r\n");
 	printf("\r\n");
@@ -1101,7 +1101,7 @@ int main(void)
 
 		if(SECOND != RTC_T.Sec)						// 이전 시간(초)이 현재시간(초)와 같지 않으면
 		{
-			SECOND = RTC_T.Sec;					// 이전 시간(초)에 현재시간(초) 저장	
+			SECOND = RTC_T.Sec;					// 이전 시간(초)에 현재시간(초) 저장
 			Beep(10);						// 비프(1초에 1번씩)
 			wdt_reset();						// Reset WDT
 			Time_Count--;						// Time_Count 감소

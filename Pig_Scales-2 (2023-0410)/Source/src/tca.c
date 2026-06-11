@@ -72,7 +72,8 @@ int8_t TIMER_0_init()
 	                      | 0 << TCA_SINGLE_CMP2_bp /* Compare 2 Interrupt: disabled */
 	                      | 1 << TCA_SINGLE_OVF_bp; /* Overflow Interrupt: enabled */
 
-	TCA0.SINGLE.PER = 0x0047;	//   5mSec
+	TCA0.SINGLE.PER = 0x000E;	//   1mSec
+//	TCA0.SINGLE.PER = 0x0047;	//   5mSec
 	// TCA0.SINGLE.PER = 0x008F;	//  10mSec
 	// TCA0.SINGLE.PER = 0x02CF;	//  50mSec
 	// TCA0.SINGLE.PER = 0x1C20;	// 500mSec
@@ -98,29 +99,30 @@ int8_t TIMER_1_init()
 	// TCA1.SINGLE.CNT = 0x17; /* Count: 0x17 */
 
 	// TCA1.SINGLE.CTRLB = 0 << TCA_SINGLE_ALUPD_bp /* Auto Lock Update: disabled */
-	//		 | 0 << TCA_SINGLE_CMP0EN_bp /* Compare 0 Enable: disabled */
-	//		 | 0 << TCA_SINGLE_CMP1EN_bp /* Compare 1 Enable: disabled */
-	//		 | 0 << TCA_SINGLE_CMP2EN_bp /* Compare 2 Enable: disabled */
-	//		 | TCA_SINGLE_WGMODE_NORMAL_gc; /*  */
+	//		     | 0 << TCA_SINGLE_CMP0EN_bp /* Compare 0 Enable: disabled */
+	//		     | 0 << TCA_SINGLE_CMP1EN_bp /* Compare 1 Enable: disabled */
+	//		     | 0 << TCA_SINGLE_CMP2EN_bp /* Compare 2 Enable: disabled */
+	//		     | TCA_SINGLE_WGMODE_NORMAL_gc; /*  */
 
 	// TCA1.SINGLE.CTRLC = 0 << TCA_SINGLE_CMP0OV_bp /* Compare 0 Waveform Output Value: disabled */
-	//		 | 0 << TCA_SINGLE_CMP1OV_bp /* Compare 1 Waveform Output Value: disabled */
-	//		 | 0 << TCA_SINGLE_CMP2OV_bp; /* Compare 2 Waveform Output Value: disabled */
+	//		     | 0 << TCA_SINGLE_CMP1OV_bp /* Compare 1 Waveform Output Value: disabled */
+	//		     | 0 << TCA_SINGLE_CMP2OV_bp; /* Compare 2 Waveform Output Value: disabled */
 
 	// TCA1.SINGLE.DBGCTRL = 0 << TCA_SINGLE_DBGRUN_bp; /* Debug Run: disabled */
 
 	// TCA1.SINGLE.EVCTRL = 0 << TCA_SINGLE_CNTAEI_bp /* Count on Event Input A: disabled */
-	//		 | 0 << TCA_SINGLE_CNTBEI_bp /* Count on Event Input B: disabled */
-	//		 | TCA_SINGLE_EVACTA_CNT_POSEDGE_gc /* Count on positive edge event */
-	//		 | TCA_SINGLE_EVACTB_UPDOWN_gc; /* Count on prescaled clock. Event controls count direction. Up-count when
+	//		      | 0 << TCA_SINGLE_CNTBEI_bp /* Count on Event Input B: disabled */
+	//		      | TCA_SINGLE_EVACTA_CNT_POSEDGE_gc /* Count on positive edge event */
+	//		      | TCA_SINGLE_EVACTB_UPDOWN_gc; /* Count on prescaled clock. Event controls count direction. Up-count when
 	//event line is 0, down-count when event line is 1. */
 
 	TCA1.SINGLE.INTCTRL = 0 << TCA_SINGLE_CMP0_bp   /* Compare 0 Interrupt: disabled */
-			      | 0 << TCA_SINGLE_CMP1_bp /* Compare 1 Interrupt: disabled */
-			      | 0 << TCA_SINGLE_CMP2_bp /* Compare 2 Interrupt: disabled */
-			      | 1 << TCA_SINGLE_OVF_bp; /* Overflow Interrupt: enabled */
+			    | 0 << TCA_SINGLE_CMP1_bp /* Compare 1 Interrupt: disabled */
+			    | 0 << TCA_SINGLE_CMP2_bp /* Compare 2 Interrupt: disabled */
+			    | 1 << TCA_SINGLE_OVF_bp; /* Overflow Interrupt: enabled */
 
-	TCA1.SINGLE.PER = 0x0047;	//   5mSec
+	TCA1.SINGLE.PER = 0x000E;	//   1mSec
+	// TCA1.SINGLE.PER = 0x0047;	//   5mSec
 	// TCA1.SINGLE.PER = 0x008F;	//  10mSec
 	// TCA1.SINGLE.PER = 0x02CF;	//  50mSec
 	// TCA1.SINGLE.PER = 0x1C20;	// 500mSec

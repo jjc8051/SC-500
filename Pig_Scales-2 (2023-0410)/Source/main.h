@@ -51,6 +51,11 @@ typedef volatile unsigned char VBYTE;
 // #define xxx_ON		sbi(PORTA_OUT, 7);		// PORTA_OUT |=  0x80
 // #define xxx_OFF		cbi(PORTA_OUT, 7);		// PORTA_OUT &= ~0x80
 
+
+// #define TOUCH_STATE		(PING & 0x08) >> 3
+// #define MAGNET_STATE		(PING & 0x10) >> 4
+
+
 //=================================================================================================
 //		PORT B Control Bit
 //=================================================================================================

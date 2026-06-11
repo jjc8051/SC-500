@@ -1,0 +1,23 @@
+# ===== 빌드 결과물 =====
+Debug/
+*.o
+*.d
+*.elf
+*.hex
+*.lss
+*.map
+*.srec
+*.eep
+
+# ===== Atmel Studio IDE 임시파일 =====
+.vs/
+*.atsuo
+.vscode/
+
+# ===== 백업 아카이브 =====
+back/
+
+# ===== 기타 =====
+*.bak
+*.tmp
+Thumbs.db
