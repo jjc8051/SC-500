@@ -115,7 +115,7 @@ ISR(USART5_RXC_vect)
 #ifdef Timer_0
 ISR(TCA0_OVF_vect)								// 500mSec Timer
 {
-	TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;				// TCA0 �����÷ο� SET
+	TCA0.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;				// TCA0 오버플로워 SET
 }
 #endif
 
@@ -123,32 +123,32 @@ ISR(TCA0_OVF_vect)								// 500mSec Timer
 #ifdef Timer_1
 ISR(TCA1_OVF_vect)								// 5mSec Timer
 {
-	TCA1.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;				// TCA1 �����÷ο� SET
+	TCA1.SINGLE.INTFLAGS = TCA_SINGLE_OVF_bm;				// TCA1 오버플로워 SET
 
 	Fnd_Display();								// FND Display
-	Key_Scan();								// key �Է� üũ
+	Key_Scan();								// key 입력 체크
 
-	if(Timer.Input_Key == 0) {KEY.Buff = 0; KEY.Key = 0;}			// Timer.Input_Key �� 0 �̸� Key �� �� Key �Է� �ʱ�ȭ
-	else			 {Timer.Input_Key--;}				// Timer.Input_Key �� 0 �� �ƴϸ� Timer.Input_Key ����
+	if(Timer.Input_Key == 0) {KEY.Buff = 0; KEY.Key = 0;}			// Timer.Input_Key 가 0 이면 Key 값 및 Key 입력 초기화
+	else			 {Timer.Input_Key--;}				// Timer.Input_Key 가 0 이 아니면 Timer.Input_Key 감소
 //-------------------------------------------------------------------------------------------------
-	if(Beep_Timer == 0) {Buzzer_OFF;}					// Beep_Timer �� 0 �̸� Buzzer OFF
-	else		    {Beep_Timer--;}					// Beep_Timer �� 0 �� �ƴϸ� Beep_Timer ����
+	if(Beep_Timer == 0) {Buzzer_OFF;}					// Beep_Timer 가 0 이면 Buzzer OFF
+	else		    {Beep_Timer--;}					// Beep_Timer 가 0 이 아니면 Beep_Timer 감소
 //-------------------------------------------------------------------------------------------------
-	Timer.RegExitTimer++;							// Timer.RegExitTimer ���� (5mSec ����)
-	if(Timer.RegExitTimer >= REG_EXIT_TIME)					// Timer.RegExitTimer �� REG_EXIT_TIME �� ���ų� ũ��
-	{									// ���� ����� �����ð�(10��) ��ư �Է� ������ Ż��
-		SET.Menu = 0;							// Menu ��� �ʱ�ȭ
-		SET.Select = 0;							// Select ��� �ʱ�ȭ
-		SET.NumSET = 0;							// ���ȣ Set ��� �ʱ�ȭ
+	Timer.RegExitTimer++;							// Timer.RegExitTimer 증가 (5mSec 마다)
+	if(Timer.RegExitTimer >= REG_EXIT_TIME)					// Timer.RegExitTimer 가 REG_EXIT_TIME 과 같거나 크면
+	{									// 설정 모드후 일정시간(10초) 버튼 입력 없으면 탈출
+		SET.Menu = 0;							// Menu 모드 초기화
+		SET.Select = 0;							// Select 모드 초기화
+		SET.NumSET = 0;							// 방번호 Set 모드 초기화
 	}
 //-------------------------------------------------------------------------------------------------
-	Timer.RTC_Timer++;							// Timer.RTC_Timer ���� (5mSec ����)
+	Timer.RTC_Timer++;							// Timer.RTC_Timer 증가 (5mSec 마다)
 //-------------------------------------------------------------------------------------------------
-	Blink_Timer++;								// Blink_Timer ���� (5mSec ����)
-	if(Blink_Timer > 50)							// Blink_Timer �� 50(0.25��)���� ũ��
+	Blink_Timer++;								// Blink_Timer 증가 (5mSec 마다)
+	if(Blink_Timer > 50)							// Blink_Timer 이 50(0.25초)보다 크면
 	{
-		Blink = Blink ? 0 : 1;						// Blink �� 1�̸� 0���� 0�̸� 1�� ����
-		Blink_Timer = 0;						// Blink_Timer �ʱ�ȭ
+		Blink = Blink ? 0 : 1;						// Blink 이 1이면 0으로 0이면 1로 변경
+		Blink_Timer = 0;						// Blink_Timer 초기화
 	}
 //-------------------------------------------------------------------------------------------------
 }
