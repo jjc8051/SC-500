@@ -49,10 +49,10 @@ void Beep(uint16_t BeepTimer_1ms)
 #ifdef Usart_0
 ISR(USART0_RXC_vect)
 {
-	while(!(USART0.STATUS & USART_RXCIF_bm));
+	while(!(USART0.STATUS & USART_RXCIF_bm)) ;
 	Rx0_Buff[Rx0_Cnt] = USART0.RXDATAL;
-	Rx0_Cnt++;
 	if(Rx0_Cnt >= RX0_SIZE) {Rx0_Cnt = 0;}					// RX0_SIZE : 250
+	Rx0_Cnt++;
 }
 #endif
 
@@ -60,10 +60,10 @@ ISR(USART0_RXC_vect)
 #ifdef Usart_1
 ISR(USART1_RXC_vect)
 {
-	while(!(USART1.STATUS & USART_RXCIF_bm));
+	while(!(USART1.STATUS & USART_RXCIF_bm)) ;
 	Rx1_Buff[Rx1_Cnt] = USART1.RXDATAL;
-	Rx1_Cnt++;
 	if(Rx1_Cnt >= RX1_SIZE) {Rx1_Cnt = 0;}					// RX1_SIZE : 250
+	Rx1_Cnt++;
 }
 #endif
 
@@ -71,10 +71,10 @@ ISR(USART1_RXC_vect)
 #ifdef Usart_2
 ISR(USART2_RXC_vect)
 {
-	while(!(USART2.STATUS & USART_RXCIF_bm));
+	while(!(USART2.STATUS & USART_RXCIF_bm)) ;
 	Rx2_Buff[Rx2_Cnt] = USART2.RXDATAL;
-	Rx2_Cnt++;
 	if(Rx2_Cnt >= RX2_SIZE) {Rx2_Cnt = 0;}					// RX2_SIZE : 250
+	Rx2_Cnt++;
 }
 #endif
 
@@ -82,10 +82,10 @@ ISR(USART2_RXC_vect)
 #ifdef Usart_3
 ISR(USART3_RXC_vect)
 {
-	while(!(USART3.STATUS & USART_RXCIF_bm));
+	while(!(USART3.STATUS & USART_RXCIF_bm)) ;
 	Rx3_Buff[Rx3_Cnt] = USART3.RXDATAL;
-	Rx3_Cnt++;
 	if(Rx3_Cnt >= RX3_SIZE) {Rx3_Cnt = 0;}					// RX3_SIZE : 250
+	Rx3_Cnt++;
 }
 #endif
 
@@ -93,10 +93,10 @@ ISR(USART3_RXC_vect)
 #ifdef Usart_4
 ISR(USART4_RXC_vect)
 {
-	while(!(USART4.STATUS & USART_RXCIF_bm));
+	while(!(USART4.STATUS & USART_RXCIF_bm)) ;
 	Rx4_Buff[Rx4_Cnt] = USART4.RXDATAL;
-	Rx4_Cnt++;
 	if(Rx4_Cnt >= RX4_SIZE) {Rx4_Cnt = 0;}					// RX4_SIZE : 250
+	Rx4_Cnt++;
 }
 #endif
 
@@ -104,10 +104,10 @@ ISR(USART4_RXC_vect)
 #ifdef Usart_5
 ISR(USART5_RXC_vect)
 {
-	while(!(USART5.STATUS & USART_RXCIF_bm));
+	while(!(USART5.STATUS & USART_RXCIF_bm)) ;
 	Rx5_Buff[Rx5_Cnt] = USART5.RXDATAL;
-	Rx5_Cnt++;
 	if(Rx5_Cnt >= RX5_SIZE) {Rx5_Cnt = 0;}					// RX5_SIZE : 250
+	Rx5_Cnt++;
 }
 #endif
 

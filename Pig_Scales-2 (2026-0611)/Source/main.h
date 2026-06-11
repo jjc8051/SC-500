@@ -342,14 +342,14 @@ typedef volatile unsigned char VBYTE;
 //=================================================================================================
 // #define Gateway_Gukbun_Addr	0				// 게이트웨이 국번 주소		// Byte   0
 #define Gateway_GWID_Addr	1				// 게이트웨이 ID   주소		// Byte   1
-#define OLD_Date_Addr		2				// 이전 날짜 주소			// Byte   2
+#define OLD_Date_Addr		2				// 이전 날짜 주소		// Byte   2
 
 #define Cell_ID_Addr		3				// 로드셀 ID 주소		// Byte   3
 #define Cell_CNT_Addr		4				// 로드셀 갯수 설정 값 주소	// Byte   4
 
 #define Cell_ROOM_Addr		5				// 방 번호 설정 값 주소		// Byte   5
-#define Cell_STAL_Addr		6				// 스톨 번호 설정 값 주소		// Byte   6
-#define Cell_AUTO_Addr		7				// 자동 모드 설정 값 주소		// Byte   7
+#define Cell_STAL_Addr		6				// 스톨 번호 설정 값 주소	// Byte   6
+#define Cell_AUTO_Addr		7				// 자동 모드 설정 값 주소	// Byte   7
 
 #define Cell_Capa_Addr		8				// 로드셀 용량 값 주소		// Word   8,  9
 #define Cell_IN_S_Addr		10				// 로드셀 입구체중 값 주소	// Word  10, 11
@@ -467,27 +467,27 @@ extern const uint8_t fnd_tbl[];
 extern uint8_t DIGIT[3][4];
 
 //=================================================================================================
-#define FW_VER			47				// 펌웨어 버젼
+#define FW_VER			46				// 펌웨어 버젼
 #define Admit_Weight		5				// 인정체중 5x10g = 50g
 
 //=================================================================================================
-extern uint8_t Gukbun;							// 게이트웨이 국번 변수 선언
-extern uint8_t Gwid;							// 게이트웨이 ID 변수 선언
-extern uint8_t Auto_Mode;						// 자동모드 변수 선언
+uint8_t Gukbun;							// 게이트웨이 국번 변수 선언
+uint8_t Gwid;							// 게이트웨이 ID 변수 선언
+uint8_t Auto_Mode;						// 자동모드 변수 선언
 
-extern uint8_t OK_Count_1;						// OK Count 1
-extern uint8_t OK_Count_2;						// OK Count 2
-extern uint8_t Zero_Count;						// Zero Count 변수 선언
-extern uint8_t Value_Count;						// Value Count 변수 선언
+uint8_t OK_Count_1;						// OK Count 1
+uint8_t OK_Count_2;						// OK Count 2
+uint8_t Zero_Count;						// Zero Count 변수 선언
+uint8_t Value_Count;						// Value Count 변수 선언
 
-extern uint8_t Time_Count;						// 시간 표시 용 변수 설정
-extern uint16_t Sec_Count;						// 초 저장 용 변수 설정
-extern uint8_t SECOND;							// 이전 시간(초)용 변수 설정
+uint8_t Time_Count;						// 시간 표시 용 변수 설정
+uint16_t Sec_Count;						// 초 저장 용 변수 설정
+uint8_t SECOND;							// 이전 시간(초)용 변수 설정
 
-extern uint16_t Data_Number;						// Data 번호
-extern uint8_t Room_Number;						// 방 번호
-extern uint8_t Stal_Number;						// 스톨 번호
-extern uint16_t EepCnt;
+uint16_t Data_Number;						// Data 번호
+uint8_t Room_Number;						// 방 번호
+uint8_t Stal_Number;						// 스톨 번호
+uint16_t EepCnt;
 
 //=================================================================================================
 void MCU_Init(void);						// AVR128DA64 MCU Initialize
