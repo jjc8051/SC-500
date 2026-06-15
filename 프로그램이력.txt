@@ -92,4 +92,9 @@
 //			:11. Read_Load_Cell() - ValSum 계산 누락(주석처리) 복원 (loadcell.c)
 //			:12. Read_Load_Cell() - ValSum 음수 시 OFF_Set 불필요한 감소 제거 (loadcell.c)
 //
+//	2026-0615	: 1. Var_Init() - _delay_ms(1) → _delay_ms(5) 수정 (main.c)
+//			: 2. Cell_Desplay() - 100Kg 분기 주석처리, FND 소수점 1자리 고정 표시 (loadcell.c)
+//			: 3. Read_Load_Cell() - OFF_Set 음수(-5) 감소 및 양수(+5) 증가 주석처리 (loadcell.c)
+//			: 4. Read_Load_Cell() - IN_Scales <= ValSum 조건 추가, OFF_Set +10 설정 (loadcell.c)
+//
 //=================================================================================================
