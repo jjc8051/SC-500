@@ -78,6 +78,25 @@
 //			: FND 꺼진 상태에서 통신 작업 진행, 	FND 꺼지는 시간 늘림  30분에서 30분으로...
 //			: 펌웨어 버젼 표시 V4.6으로 변경
 //
+//	2026-0611	: 버그 수정 12건
+//			: 1. SAVE.Count, SAVE.Data 배열 memset 초기화 수정 (main.c)
+//			: 2. Zigbee 수신 for 루프 상한 버퍼 오버플로우 수정 (main.c, zigbee.c)
+//			: 3. uint8_t 음수 비교 조건 제거 (main.c)
+//			: 4. & 단일 비트 연산자 → && 논리 연산자 수정 (main.c)
+//			: 5. 전역변수 extern 선언 분리 - typedefine.h extern, main.c 실체 정의
+//			: 6. Beep 타이머 단위 주석 1mSec → 5mSec 수정 (driver_isr.c, main.h)
+//			: 7. USART ISR Rx_Cnt++ 순서 복원 - 범위 체크 앞으로 이동 (driver_isr.c)
+//			: 8. .gitignore 복원
+//			: 9. Cell_Zero_Set() - do-while 수렴 루프로 OFF_Set 보정, else if 발산 버그 수정 (loadcell.c)
+//			:10. Read_Load_Cell() - IN_Scales 조건에서 OFF_Set 불필요한 증가 제거 (loadcell.c)
+//			:11. Read_Load_Cell() - ValSum 계산 누락(주석처리) 복원 (loadcell.c)
+//			:12. Read_Load_Cell() - ValSum 음수 시 OFF_Set 불필요한 감소 제거 (loadcell.c)
+//
+//	2026-0615	: 1. Var_Init() - _delay_ms(1) → _delay_ms(5) 수정 (main.c)
+//			: 2. Cell_Desplay() - 100Kg 분기 주석처리, FND 소수점 1자리 고정 표시 (loadcell.c)
+//			: 3. Read_Load_Cell() - OFF_Set 음수(-5) 감소 및 양수(+5) 증가 주석처리 (loadcell.c)
+//			: 4. Read_Load_Cell() - IN_Scales <= ValSum 조건 추가, OFF_Set +10 설정 (loadcell.c)
+//
 //=================================================================================================
 #include <main.h>
 #include <avr/fuse.h>
@@ -985,10 +1004,10 @@ void Var_Init(void)								// 변수 및 로드셀 초기화
 	}
 
 	Proportion_Set();							// 로드셀 비율 설정 및 초기화
-	_delay_ms(1);
+	_delay_ms(5);
 
 	Cell_Zero_Set();							// 로드셀 0 값 찾기 2회 반복
-	_delay_ms(1);
+	_delay_ms(5);
 	Cell_Zero_Set();
 	Alarm();								// 알람(비프 3번)
 

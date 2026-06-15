@@ -26,7 +26,7 @@ void Cell_Desplay(void)								// 로드셀 무게 표시
 	Weight_10    = CELL.Value % 100 / 10;					// 측정무게   0.10의 자리   0.10Kg
 	Weight_1     = CELL.Value % 10;						// 측정무게   0.01의 자리   0.01Kg
 
-	if(CELL.Value > 10000)							// 측정무게 100Kg 보다 크면
+/*	if(CELL.Value > 10000)							// 측정무게 100Kg 보다 크면
 	{
 		DIGIT[0][3] = fnd_tbl[Weight_10000];				// 측정무게 100.00의 자리
 		DIGIT[0][2] = fnd_tbl[Weight_1000];				// 측정무게  10.00의 자리
@@ -47,6 +47,11 @@ void Cell_Desplay(void)								// 로드셀 무게 표시
 		DIGIT[0][1] = fnd_tbl[Weight_10];				// 측정무게  0.10의 자리
 		DIGIT[0][0] = fnd_tbl[Weight_1];				// 측정무게  0.01의 자리
 	}
+*/
+	DIGIT[0][3] = fnd_tbl[Weight_10000];					// 측정무게 100.00의 자리
+	DIGIT[0][2] = fnd_tbl[Weight_1000];					// 측정무게  10.00의 자리
+	DIGIT[0][1] = fnd_tbl[Weight_100]+FND_Point;				// 측정무게   1.00의 자리
+	DIGIT[0][0] = fnd_tbl[Weight_10];					// 측정무게   0.10의 자리
 }
 
 //=================================================================================================
@@ -110,13 +115,18 @@ uint16_t Read_Load_Cell(void)							// 로드셀 측정값 읽기
 				Cell_Zero_Set();				// 로드셀 0 값 찾기
 	 			Value_Count = 0;
 			}
-			else {CELL.OFF_Set = OFF_SET -5;}			// OFF_Set - 5
+//			else {CELL.OFF_Set = OFF_SET - 5;}			// OFF_Set - 5
 			ValSum = 0;						// ValSum 을 0으로 초기화
 		}
 		else if(ValSum > 0 && IN_Scales > ValSum)			// ValSum 이 0 보다 크고 입구체중 보다 작으면
 		{
-			CELL.OFF_Set = OFF_SET + 5;				// OFF_Set + 10
+//			CELL.OFF_Set = OFF_SET + 5;				// OFF_Set + 5
 			ValSum = 0;						// ValSum 을 0으로 초기화
+		}
+		else if(IN_Scales <= ValSum)					// ValSum 이 입구체중 과 같거나 크면
+		{
+			CELL.OFF_Set = OFF_SET + 10;				// OFF_Set + 10
+//			ValSum = 0;						// ValSum 을 0으로 초기화
 		}
 
 		if(ValSum > CAPA) {ValSum = 0;}					// ValSum 이 CAPA(200Kg) 보다 크면
@@ -129,17 +139,17 @@ uint16_t Read_Load_Cell(void)							// 로드셀 측정값 읽기
 void Cell_Zero_Set(void)							// 로드셀 0 값 찾기
 {
 	int32_t Value = 0;							// 측정 값 변수 초기화
-//	int32_t Value_Sum = 0;							// 측정 값 계산 변수 초기화
+	int32_t Value_Sum = 0;							// 측정 값 계산 변수 초기화
 
 	Value = Cell_Data_Read();						// 로드셀 Data 읽기
-/*
+
 	do{
 		Value_Sum = CELL.OFF_Set - Value;				// 로드셀 OFF_Set 초기값(20Kg) - Data = Value_Sum
 		if     (Value_Sum > 0) {CELL.OFF_Set = CELL.OFF_Set - Value_Sum;}	// Value_Sum 값이 0 보다   크면 OFF_Set - Value_Sum 해서 OFF_Set에 저장
-		else if(Value_Sum < 0) {CELL.OFF_Set = CELL.OFF_Set + Value_Sum;}	// Value_Sum 값이 0 보다 작으면 OFF_Set + Value_Sum 해서 OFF_Set에 저장
+		else if(Value_Sum < 0) {CELL.OFF_Set = CELL.OFF_Set - Value_Sum;}	// Value_Sum 값이 0 보다 작으면 OFF_Set + Value_Sum 해서 OFF_Set에 저장
 	}while(Value_Sum != 0);							// !Value_Sum 이 0 일때까지 반복
-*/
-	CELL.OFF_Set = Value;							// 현재값을 영점으로 설정
+
+//	if(Value > 0) {CELL.OFF_Set = Value;}					// 유효한 값일 때만 영점 업데이트
 	Beep(10);
 	wdt_reset();								// Reset WDT
 }
